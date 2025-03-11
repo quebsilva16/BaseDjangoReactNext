@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mariadb:latest
+    container_name: mariadb
+    env_file: .env  # Cargar variables desde .env
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    container_name: django_backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file: .env  # Cargar variables desde .env
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: next_frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    env_file: .env  # Cargar variables desde .env
+    command: npm run dev
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
