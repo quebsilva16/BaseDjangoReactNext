@@ -28,7 +28,7 @@ services:
     build: ./frontend
     container_name: next_frontend
     volumes:
-      - ./frontend:/app
+      - ./frontend/src:/app/src  # Solo monta el código fuente
     ports:
       - "3000:3000"
     env_file: .env  # Cargar variables desde .env
